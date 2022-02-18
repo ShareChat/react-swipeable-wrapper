@@ -16,6 +16,8 @@ yarn add react-swipeable-wrapper
 
 ## Example
 
+#### [Github Pages Demo](https://sharechat.github.io/react-swipeable-wrapper)
+
 ![Example](/static/example.gif)
 
 ## Usage
