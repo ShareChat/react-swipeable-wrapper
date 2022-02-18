@@ -18,9 +18,9 @@
 	"main": "./dist/index.umd.js",
 	"module": "./dist/index.es.js",
 	"scripts": {
-		"dev:example": "cd example && yarn dev",
+		"dev:example": "cd example && yarn && yarn dev",
 		"build": "vite build",
-		"build:example": "cd example && yarn build",
+		"build:example": "cd example && yarn && yarn build",
 		"format": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
 		"lint": "eslint ./** -c .eslintrc.json --fix --ext js,jsx --cache --quiet --no-error-on-unmatched-pattern",
 		"size": "size-limit",
