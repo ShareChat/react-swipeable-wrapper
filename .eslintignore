@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+static
+README.md
+package.json
+yarn-error.log
+yarn.lock
+vite.config.js
