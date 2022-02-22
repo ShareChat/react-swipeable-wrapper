@@ -20,7 +20,8 @@
 	"scripts": {
 		"dev:example": "cd example && yarn && yarn dev",
 		"build": "vite build",
-		"build:example": "cd example && yarn && yarn build",
+		"build:example": "cd example && yarn && yarn upgrade react-swipeable-wrapper && yarn build",
+		"prepare": "yarn build && yarn build:example",
 		"format": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
 		"lint": "eslint ./** -c .eslintrc.json --fix --ext js,jsx --cache --quiet --no-error-on-unmatched-pattern",
 		"size": "size-limit",
