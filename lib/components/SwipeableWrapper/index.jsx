@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unsafe-optional-chaining */
 import React, {
@@ -7,10 +8,11 @@ import React, {
 	useImperativeHandle,
 	useLayoutEffect,
 	memo,
+	useEffect,
 } from "react";
 import PropTypes from "prop-types";
-import { useSpring, animated } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
+import { smoothScroll } from "../../helpers";
 
 const screenWidth = () =>
 	typeof window !== "undefined" ? window.innerWidth : 360;
@@ -19,23 +21,6 @@ const screenHeight = () =>
 
 const innerHeight = screenHeight();
 const innerWidth = screenWidth();
-
-const scrollToTop = () => {
-	const isSmoothScrollSupported =
-		"scrollBehavior" in document.documentElement.style;
-
-	const scrollToOptions = {
-		top: 0,
-		left: 0,
-		behavior: "smooth",
-	};
-
-	if (isSmoothScrollSupported) {
-		window.scroll(scrollToOptions);
-	} else {
-		window.scroll(scrollToOptions.left, scrollToOptions.top);
-	}
-};
 
 const checkParent = (el, filterIds) => {
 	if (el === document) return false;
@@ -60,41 +45,34 @@ const SwipeableWrapper = forwardRef(
 		const previousIndex = useRef(initialIndex);
 		const totalWidth = useRef(screenWidth());
 
-		const onRestFn = useCallback(
-			({ finished }) => {
-				if (finished && previousIndex.current !== index.current) {
-					onSlideChange(index.current);
-					scrollToTop();
-					const height = innerHeight - (elementRef.current.clientTop || 100);
-					elementRef.current.children[
-						previousIndex.current
-					].style.height = `${height}px`;
-					elementRef.current.children[index.current].style.height = "auto";
-					previousIndex.current = index.current;
-				}
-			},
-			[onSlideChange],
-		);
+		const onRestFn = useCallback(() => {
+			if (previousIndex.current !== index.current) {
+				onSlideChange(index.current);
+				const height = innerHeight - (elementRef.current.clientTop || 100);
+				elementRef.current.children[
+					previousIndex.current
+				].style.height = `${height}px`;
+				elementRef.current.children[index.current].style.height = "auto";
+				previousIndex.current = index.current;
+			}
+		}, [onSlideChange]);
 
-		const [{ x }, set] = useSpring(() => ({
-			x: -index.current * (totalWidth.current || innerWidth),
-			onRest: onRestFn,
-		}));
-
-		const swipeToIndex = slideToIndex => {
-			set.start({
-				x: -slideToIndex * (totalWidth.current || innerWidth),
-				config: {
-					mass: 0.3,
-					friction: 8,
-					tension: 60,
-				},
+		const swipeToIndex = (slideToIndex, smooth = true) => {
+			smoothScroll(elementRef.current, {
+				offset: slideToIndex * (totalWidth.current || innerWidth),
+				context: elementRef.current.parentElement,
+				callback: onRestFn,
+				duration: smooth ? 500 : 10,
 			});
-			tabsRef?.current?.tabsApi().start({
-				x:
-					(slideToIndex * tabsRef.current?.tabsClientWidth()) / children.length,
-				config: { mass: 0.1, friction: 8, tension: 60 },
-			});
+			const bottomBarRef = tabsRef?.current?.getBottomBarRef();
+			if (bottomBarRef) {
+				bottomBarRef.current.style.transition = smooth
+					? "0.3s ease-out"
+					: "none";
+				bottomBarRef.current.style.transform = `translateX(${
+					(slideToIndex * tabsRef.current?.tabsClientWidth()) / children.length
+				}px)`;
+			}
 			if (index.current === slideToIndex) return;
 			tabsRef?.current?.changeTabsStyle(index.current, slideToIndex);
 			index.current = slideToIndex;
@@ -104,7 +82,6 @@ const SwipeableWrapper = forwardRef(
 			getCurrentIndex: () => index.current,
 			swipeToIndex,
 		}));
-
 		const bind = useDrag(
 			({ event, down, movement: [mx], velocity }) => {
 				const shouldFilter =
@@ -125,17 +102,22 @@ const SwipeableWrapper = forwardRef(
 							moveToPoint,
 							(totalWidth.current || innerWidth) / 4,
 						);
-					set.set({
-						x:
-							(dirX ? -1 : 1) * moveToPoint -
-							index.current * (totalWidth.current || innerWidth),
+					smoothScroll(elementRef.current, {
+						offset:
+							index.current * (totalWidth.current || innerWidth) -
+							(dirX ? -1 : 1) * moveToPoint,
+						context: elementRef.current.parentElement,
+						duration: 5,
 					});
-					tabsRef?.current?.tabsApi().set({
-						x:
+					const bottomBarRef = tabsRef?.current?.getBottomBarRef();
+					if (bottomBarRef) {
+						bottomBarRef.current.style.transition = "none";
+						bottomBarRef.current.style.transform = `translateX(${
 							((dirX ? 1 : -1) * moveToPoint +
 								index.current * tabsRef?.current?.tabsClientWidth()) /
-							children.length,
-					});
+							children.length
+						}px)`;
+					}
 				} else if (!down) {
 					const slideToIndex = index.current + (dirX ? 1 : -1);
 					swipeToIndex(
@@ -165,12 +147,15 @@ const SwipeableWrapper = forwardRef(
 			}
 		}, []);
 
+		useEffect(() => {
+			swipeToIndex(index.current, false);
+		}, []);
+
 		return (
 			<div style={{ overflow: "hidden", width: "inherit" }}>
-				<animated.div
+				<div
 					{...bind()}
 					style={{
-						x,
 						width: `${children.length * 100}%`,
 						display: "flex",
 						touchAction: "none",
@@ -189,7 +174,7 @@ const SwipeableWrapper = forwardRef(
 								: child}
 						</div>
 					))}
-				</animated.div>
+				</div>
 			</div>
 		);
 	},
@@ -198,7 +183,7 @@ const SwipeableWrapper = forwardRef(
 SwipeableWrapper.propTypes = {
 	tabsRef: PropTypes.shape({
 		current: PropTypes.shape({
-			tabsApi: PropTypes.func,
+			getBottomBarRef: PropTypes.func,
 			changeTabsStyle: PropTypes.func,
 			tabsClientWidth: PropTypes.func,
 		}),

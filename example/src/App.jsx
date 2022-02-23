@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useRef } from "react";
 
 import { SwipeableWrapper, SwipeTabsWrapper } from "react-swipeable-wrapper";
@@ -44,21 +45,27 @@ const styles = {
 const App = () => {
 	const swipeRef = useRef(null);
 	const tabsRef = useRef(null);
+	const numberOfSlides = 3;
 	return (
 		<div>
 			<div style={styles.parent}>
 				<SwipeTabsWrapper
 					swipeRef={swipeRef}
 					ref={tabsRef}
-					tabs={["Tab 1", "Tab 2", "Tab 3"]}
+					tabs={[...Array(numberOfSlides).keys()].map((_, i) => `Tab ${i + 1}`)}
 					bottomBarStyles={styles.bottomBar}
 					tabStyles={styles.tabs}
 					selectedTabStyles={styles.selectedTabs}
 				/>
 				<SwipeableWrapper tabsRef={tabsRef} ref={swipeRef}>
-					<div style={{ ...styles.slide, ...styles.slide1 }}>1st slide</div>
-					<div style={{ ...styles.slide, ...styles.slide2 }}>2nd slide</div>
-					<div style={{ ...styles.slide, ...styles.slide3 }}>3rd slide</div>
+					{[...Array(numberOfSlides).keys()].map((_, i) => (
+						<div
+							style={{ ...styles.slide, ...styles[`slide${(i % 3) + 1}`] }}
+							key={i}
+						>
+							Slide {i + 1}
+						</div>
+					))}
 				</SwipeableWrapper>
 			</div>
 		</div>

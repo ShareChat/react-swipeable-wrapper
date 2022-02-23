@@ -9,7 +9,6 @@ import React, {
 	memo,
 } from "react";
 import PropTypes from "prop-types";
-import { useSpring, animated } from "@react-spring/web";
 
 const applyStyles = (refEl, stylesToBeApplied = {}) => {
 	if (!refEl) return;
@@ -31,10 +30,7 @@ const SwipeTabsWrapper = forwardRef(
 		ref,
 	) => {
 		const tabsRef = useRef(null);
-
-		const [{ x }, set] = useSpring(() => ({
-			x: -swipeRef?.current?.getCurrentIndex() * tabsRef.current?.clientWidth,
-		}));
+		const bottomBarRef = useRef(null);
 
 		const timer = useRef(null);
 
@@ -60,7 +56,7 @@ const SwipeTabsWrapper = forwardRef(
 		);
 
 		useImperativeHandle(ref, () => ({
-			tabsApi: () => set,
+			getBottomBarRef: () => bottomBarRef,
 			changeTabsStyle,
 			tabsClientWidth: () => tabsRef.current?.clientWidth,
 		}));
@@ -74,11 +70,8 @@ const SwipeTabsWrapper = forwardRef(
 
 		useEffect(() => {
 			const index = swipeRef?.current?.getCurrentIndex();
-			set.set({
-				x: index * (tabsRef.current?.clientWidth / tabs.length),
-			});
 			changeTabsStyle(index, index);
-		}, [changeTabsStyle, set, swipeRef, tabs.length]);
+		}, [changeTabsStyle, swipeRef]);
 
 		return (
 			<div
@@ -112,15 +105,15 @@ const SwipeTabsWrapper = forwardRef(
 						</div>
 					))}
 				</div>
-				<animated.div
+				<div
 					style={{
-						x,
 						width: `${100 / tabs.length}%`,
 						height: "0.25rem",
 						...bottomBarStyles,
 						position: "absolute",
 						bottom: "0px",
 					}}
+					ref={bottomBarRef}
 				/>
 			</div>
 		);
