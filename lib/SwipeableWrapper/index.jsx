@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable no-unsafe-optional-chaining */
 import React, {
@@ -11,14 +12,9 @@ import React, {
 import PropTypes from "prop-types";
 import { useSpring, animated } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
+import { raf } from "../helpers";
 
-const screenWidth = () =>
-	typeof window !== "undefined" ? window.innerWidth : 360;
-const screenHeight = () =>
-	typeof window !== "undefined" ? window.innerHeight : 640;
-
-const innerHeight = screenHeight();
-const innerWidth = screenWidth();
+const innerHeight = window?.innerHeight ?? 0;
 
 const scrollToTop = () => {
 	const isSmoothScrollSupported =
@@ -46,7 +42,7 @@ const checkParent = (el, filterIds) => {
 const SwipeableWrapper = forwardRef(
 	(
 		{
-			tabsRef,
+			bottomBarRef,
 			initialIndex,
 			onSlideChange,
 			children,
@@ -58,7 +54,7 @@ const SwipeableWrapper = forwardRef(
 		const elementRef = useRef(null);
 		const index = useRef(initialIndex);
 		const previousIndex = useRef(initialIndex);
-		const totalWidth = useRef(screenWidth());
+		const totalWidth = useRef(0);
 
 		const onRestFn = useCallback(
 			({ finished }) => {
@@ -77,26 +73,28 @@ const SwipeableWrapper = forwardRef(
 		);
 
 		const [{ x }, set] = useSpring(() => ({
-			x: -index.current * (totalWidth.current || innerWidth),
+			x: -index.current * totalWidth.current,
 			onRest: onRestFn,
 		}));
 
 		const swipeToIndex = slideToIndex => {
 			set.start({
-				x: -slideToIndex * (totalWidth.current || innerWidth),
+				x: -slideToIndex * totalWidth.current,
 				config: {
 					mass: 0.3,
 					friction: 8,
 					tension: 60,
 				},
 			});
-			tabsRef?.current?.tabsApi().start({
-				x:
-					(slideToIndex * tabsRef.current?.tabsClientWidth()) / children.length,
-				config: { mass: 0.1, friction: 8, tension: 60 },
-			});
+			if (bottomBarRef?.current) {
+				raf(() => {
+					bottomBarRef.current.style.transition = "0.3s ease-out";
+					bottomBarRef.current.style.transform = `translateX(${
+						100 * slideToIndex
+					}%)`;
+				});
+			}
 			if (index.current === slideToIndex) return;
-			tabsRef?.current?.changeTabsStyle(index.current, slideToIndex);
 			index.current = slideToIndex;
 		};
 
@@ -121,26 +119,25 @@ const SwipeableWrapper = forwardRef(
 						(index.current === 0 && !dirX) ||
 						(index.current === children.length - 1 && dirX)
 					)
-						moveToPoint = Math.min(
-							moveToPoint,
-							(totalWidth.current || innerWidth) / 4,
-						);
+						moveToPoint = Math.min(moveToPoint, totalWidth.current / 4);
 					set.set({
 						x:
 							(dirX ? -1 : 1) * moveToPoint -
-							index.current * (totalWidth.current || innerWidth),
+							index.current * totalWidth.current,
 					});
-					tabsRef?.current?.tabsApi().set({
-						x:
-							((dirX ? 1 : -1) * moveToPoint +
-								index.current * tabsRef?.current?.tabsClientWidth()) /
-							children.length,
-					});
+					if (bottomBarRef?.current) {
+						const moveX = moveToPoint / totalWidth.current;
+						raf(() => {
+							bottomBarRef.current.style.transition = "none";
+							bottomBarRef.current.style.transform = `translateX(${
+								((dirX ? 1 : -1) * moveX + index.current) * 100
+							}%)`;
+						});
+					}
 				} else if (!down) {
 					const slideToIndex = index.current + (dirX ? 1 : -1);
 					swipeToIndex(
-						(Math.abs(mx) >= (totalWidth.current || innerWidth) / 20 ||
-							velocity > 1.75) &&
+						(Math.abs(mx) >= totalWidth.current / 20 || velocity > 1.75) &&
 							slideToIndex >= 0 &&
 							slideToIndex < children.length
 							? slideToIndex
@@ -154,7 +151,6 @@ const SwipeableWrapper = forwardRef(
 				pointer: { touch: true },
 			},
 		);
-
 		useLayoutEffect(() => {
 			if (elementRef.current) {
 				totalWidth.current = elementRef.current.parentElement.offsetWidth;
@@ -196,12 +192,8 @@ const SwipeableWrapper = forwardRef(
 );
 
 SwipeableWrapper.propTypes = {
-	tabsRef: PropTypes.shape({
-		current: PropTypes.shape({
-			tabsApi: PropTypes.func,
-			changeTabsStyle: PropTypes.func,
-			tabsClientWidth: PropTypes.func,
-		}),
+	bottomBarRef: PropTypes.shape({
+		current: PropTypes.objectOf(PropTypes.object),
 	}),
 	initialIndex: PropTypes.number,
 	onSlideChange: PropTypes.func,
@@ -211,7 +203,7 @@ SwipeableWrapper.propTypes = {
 };
 
 SwipeableWrapper.defaultProps = {
-	tabsRef: null,
+	bottomBarRef: null,
 	onSlideChange: () => {},
 	initialIndex: 0,
 	filterNodes: [],
