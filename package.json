@@ -38,7 +38,6 @@
 		"react": "^16.0.0 || ^17"
 	},
 	"devDependencies": {
-		"@react-spring/web": "^9.4.3",
 		"@size-limit/preset-small-lib": "^7.0.8",
 		"@use-gesture/react": "^10.2.6",
 		"@vitejs/plugin-react": "^1.2.0",
