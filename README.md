@@ -18,20 +18,23 @@ yarn add react-swipeable-wrapper
 
 #### [Github Pages Demo](https://sharechat.github.io/react-swipeable-wrapper)
 
-![Example](/static/example.gif)
+![Example](https://raw.githubusercontent.com/ShareChat/react-swipeable-wrapper/master/static/example.gif?token=GHSAT0AAAAAABORN6DOZK4GEJ5SP55MXDZ6YRO3DJA)
 
 ## Usage
 
 ```jsx
-import { useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
-import { SwipeableWrapper, SwipeTabsWrapper } from "react-swipeable-wrapper";
+import SwipeableWrapper from "react-swipeable-wrapper";
+
+const tabs = ["Tab 1", "Tab 2", "Tab 3"];
+const initialIndex = 0;
 
 const styles = {
 	parent: {
 		maxWidth: 800,
 		margin: "auto",
-		marginTop: "10em",
+		paddingTop: "10em",
 		overflow: "hidden",
 	},
 	text: {
@@ -52,35 +55,72 @@ const styles = {
 	slide3: {
 		background: "#FFBF00",
 	},
+	tabsParent: {
+		width: "50%",
+	},
+	tabs: {
+		display: "flex",
+		justifyContent: "space-around",
+		height: "2rem",
+	},
 	bottomBar: {
 		height: "4px",
 		borderTopRightRadius: "50px 20px",
 		borderTopLeftRadius: "50px 20px",
 		background: "#000080",
+		width: `${100 / tabs.length}%`,
 	},
-	tabs: {
+	nonSelectedTab: {
 		color: "#DE3163",
 	},
-	selectedTabs: {
-		color: "#6495ED",
+	selectedTab: {
+		color: "#000080",
 	},
 };
 
-function MySlides() {
+const App = () => {
 	const swipeRef = useRef(null);
-	const tabsRef = useRef(null);
+	const bottomBarRef = useRef(null);
+
+	const [currentSlideIdx, setSlideIdx] = useState(initialIndex);
+
+	const onTabClick = useCallback(currentIndex => {
+		const { getCurrentIndex, swipeToIndex } = swipeRef?.current ?? {};
+		const previousIndex = getCurrentIndex();
+		if (currentIndex !== previousIndex) swipeToIndex(currentIndex);
+	}, []);
+
+	const handleSlideChange = currentIndex => {
+		setSlideIdx(currentIndex);
+	};
+
 	return (
 		<div>
 			<div style={styles.parent}>
-				<SwipeTabsWrapper
-					swipeRef={swipeRef}
-					ref={tabsRef}
-					tabs={["Tab 1", "Tab 2", "Tab 3"]}
-					bottomBarStyles={styles.bottomBar}
-					tabStyles={styles.tabs}
-					selectedTabStyles={styles.selectedTabs}
-				/>
-				<SwipeableWrapper tabsRef={tabsRef} ref={swipeRef}>
+				<div style={styles.tabsParent}>
+					<div style={styles.tabs}>
+						{tabs.map((tab, idx) => (
+							<div
+								key={tab}
+								onClick={() => onTabClick(idx)}
+								style={
+									currentSlideIdx === idx
+										? styles.selectedTab
+										: styles.nonSelectedTab
+								}
+							>
+								{tab}
+							</div>
+						))}
+					</div>
+					<div ref={bottomBarRef} style={styles.bottomBar} />
+				</div>
+				<SwipeableWrapper
+					ref={swipeRef}
+					initialIndex={initialIndex}
+					onSlideChange={handleSlideChange}
+					bottomBarRef={bottomBarRef}
+				>
 					<div style={{ ...styles.slide, ...styles.slide1 }}>1st slide</div>
 					<div style={{ ...styles.slide, ...styles.slide2 }}>2nd slide</div>
 					<div style={{ ...styles.slide, ...styles.slide3 }}>3rd slide</div>
@@ -88,31 +128,20 @@ function MySlides() {
 			</div>
 		</div>
 	);
-}
-
-export default MySlides;
+};
 ```
 
 ## SwipeableWrapper Props
 
-| Parameter       | Type                                | Default    | Description                                                   |
-| :-------------- | :---------------------------------- | :--------- | :------------------------------------------------------------ |
-| `tabsRef`       | `React.RefObject<HTMLInputElement>` | `null`     | Ref applied on `SwipeTabsWrapper` component.                  |
-| `onSlideChange` | `function`                          | `() => {}` | Each time a slide is changed, this function will be executed. |
-| `initialIndex`  | `number`                            | `0`        | Index of the slide to be displayed on the inital mount.       |
-| `filterNodes`   | `Array`                             | `[]`       | Node identifiers that will not accept swipes                  |
-| `hideOtherTabs` | `boolean`                           | `false`    | Slides that are not in view will be hidden                    |
-
-## SwipeTabsWrapper Props
-
-| Parameter           | Type                                | Default | Description                                                |
-| :------------------ | :---------------------------------- | :------ | :--------------------------------------------------------- |
-| `swipeRef`          | `React.RefObject<HTMLInputElement>` |         | **Required**. Ref applied on `SwipeableWrapper` component. |
-| `tabs`              | `Array`                             |         | **Required**. Array of tabs names                          |
-| `tabStyles`         | `object`                            | `{}`    | Styles of non selected tab                                 |
-| `selectedTabStyles` | `object`                            | `{}`    | Styles of selected tab                                     |
-| `bottomBarStyles`   | `object`                            | `{}`    | Styles of bottom bar                                       |
-| `tabsWrapperStyles` | `object`                            | `{}`    | Styles of tabs wrapper                                     |
+| Parameter                  | Type                                | Default    | Description                                                   |
+| :------------------------- | :---------------------------------- | :--------- | :------------------------------------------------------------ |
+| `bottomBarRef`             | `React.RefObject<HTMLInputElement>` | `null`     | Ref applied on div that'll behave as bottom bar.              |
+| `onSlideChange`            | `function`                          | `() => {}` | Each time a slide is changed, this function will be executed. |
+| `initialIndex`             | `number`                            | `0`        | Index of the slide to be displayed on the initial mount.      |
+| `filterNodes`              | `Array`                             | `[]`       | Node identifiers that will not accept swipes.                 |
+| `hideOtherTabs`            | `boolean`                           | `false`    | Slides that are not in view will be hidden.                   |
+| `transitionDuration`       | `number`                            | `300`      | Duration of the transition.                                   |
+| `transitionTimingFunction` | `string`                            | `ease-out` | Timing function of the transition.                            |
 
 ## Functions
 
@@ -132,4 +161,3 @@ const currentSlide = swipeRef.current.getCurrentIndex();
 
 This project is licensed under the terms of the
 [MIT license](https://github.com/Sharechat/react-swipeable-wrapper/blob/master/LICENSE).
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/Sharechat/react-swipeable-wrapper/blob/master/LICENSE)

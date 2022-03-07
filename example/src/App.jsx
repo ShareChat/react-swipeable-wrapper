@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
 import SwipeableWrapper from "react-swipeable-wrapper";
 
@@ -59,11 +59,11 @@ const App = () => {
 
 	const [currentSlideIdx, setSlideIdx] = useState(initialIndex);
 
-	const onTabClick = currentIndex => {
+	const onTabClick = useCallback(currentIndex => {
 		const { getCurrentIndex, swipeToIndex } = swipeRef?.current ?? {};
 		const previousIndex = getCurrentIndex();
 		if (currentIndex !== previousIndex) swipeToIndex(currentIndex);
-	};
+	}, []);
 
 	const handleSlideChange = currentIndex => {
 		setSlideIdx(currentIndex);

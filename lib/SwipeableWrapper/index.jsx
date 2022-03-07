@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import { useDrag } from "@use-gesture/react";
 import { useLayoutEffect, useRaf } from "../helpers";
 
-const innerHeight = window?.innerHeight ?? 0;
+const innerHeight = typeof window !== "undefined" ? window.innerHeight : 0;
 
 const scrollToTop = () => {
 	const isSmoothScrollSupported =
@@ -59,39 +59,42 @@ const SwipeableWrapper = forwardRef(
 
 		const onRestFn = useCallback(() => {
 			if (previousIndex.current !== index.current) {
+				const prevIndex = previousIndex.current;
+				const currIndex = index.current;
 				rAF(() => {
 					onSlideChange(index.current);
 					scrollToTop();
 					const height = innerHeight - elementRef.current.clientTop;
-					elementRef.current.children[
-						previousIndex.current
-					].style.height = `${height}px`;
-					elementRef.current.children[index.current].style.height = "auto";
+					elementRef.current.children[prevIndex].style.height = `${height}px`;
+					elementRef.current.children[currIndex].style.height = "auto";
 				});
 				previousIndex.current = index.current;
 			}
 		}, [onSlideChange, rAF]);
 
-		const swipeToIndex = slideToIndex => {
-			rAF(() => {
-				elementRef.current.style.transitionDuration = `${
-					transitionDuration / 1000
-				}s`;
-				if (bottomBarRef?.current) {
-					bottomBarRef.current.style.transitionDuration = `${
-						transitionDuration / 1000
-					}s`;
-					bottomBarRef.current.style.transform = `translate3d(${
-						100 * slideToIndex
-					}%, 0px, 0px)`;
-				}
-				elementRef.current.style.transform = `translate3d(${
-					-slideToIndex * totalWidth.current
-				}px, 0px, 0px)`;
-			});
-			if (index.current === slideToIndex) return;
-			index.current = slideToIndex;
-		};
+		const swipeToIndex = useCallback(
+			(slideToIndex, avoidAnimation = false) => {
+				rAF(() => {
+					elementRef.current.style.transitionDuration = !avoidAnimation
+						? `${transitionDuration / 1000}s`
+						: "0s";
+					if (bottomBarRef?.current) {
+						bottomBarRef.current.style.transitionDuration = !avoidAnimation
+							? `${transitionDuration / 1000}s`
+							: "0s";
+						bottomBarRef.current.style.transform = `translate3d(${
+							100 * slideToIndex
+						}%, 0px, 0px)`;
+					}
+					elementRef.current.style.transform = `translate3d(${
+						-slideToIndex * totalWidth.current
+					}px, 0px, 0px)`;
+				});
+				if (index.current === slideToIndex) return;
+				index.current = slideToIndex;
+			},
+			[bottomBarRef, rAF, transitionDuration],
+		);
 
 		useImperativeHandle(ref, () => ({
 			getCurrentIndex: () => index.current,
@@ -153,10 +156,11 @@ const SwipeableWrapper = forwardRef(
 				bottomBarRef.current.style.transitionTimingFunction =
 					transitionTimingFunction;
 			}
+			swipeToIndex(initialIndex, true);
 			const el = elementRef?.current;
 			if (el) {
 				totalWidth.current = el.parentElement.offsetWidth;
-				const height = innerHeight - (el.clientTop || 100);
+				const height = innerHeight - el.clientTop;
 				for (let i = 0; i < children.length; i++) {
 					el.children[i].style.height =
 						initialIndex === i ? "auto" : `${height}px`;
@@ -178,14 +182,17 @@ const SwipeableWrapper = forwardRef(
 						touchAction: "none",
 						transition: "transform",
 						transitionTimingFunction,
-						willChange: "transform, height",
+						willChange: "transform",
 					}}
 					ref={elementRef}
 				>
 					{children.map((child, loopIndex) => (
 						<div
 							key={`tabs-${loopIndex}`}
-							style={{ width: `${100 / children.length}%` }}
+							style={{
+								width: `${100 / children.length}%`,
+								willChange: "height",
+							}}
 						>
 							{hideOtherTabs
 								? loopIndex === index.current
