@@ -1,6 +1,6 @@
 [
 	{
-		"limit": "68 KB",
+		"limit": "10 KB",
 		"path": "dist/index.umd.js"
 	}
 ]
