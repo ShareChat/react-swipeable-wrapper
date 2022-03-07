@@ -604,7 +604,7 @@ react-refresh@^0.11.0:
   integrity sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==
 
 "react-swipeable-wrapper@file:..":
-  version "1.0.0"
+  version "1.0.1"
 
 "react@file:../node_modules/react":
   version "17.0.2"
