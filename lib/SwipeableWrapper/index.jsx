@@ -1,6 +1,3 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable react/no-array-index-key */
-/* eslint-disable no-unsafe-optional-chaining */
 import React, {
 	useCallback,
 	forwardRef,
@@ -161,7 +158,7 @@ const SwipeableWrapper = forwardRef(
 			if (el) {
 				totalWidth.current = el.parentElement.offsetWidth;
 				const height = innerHeight - el.clientTop;
-				for (let i = 0; i < children.length; i++) {
+				for (let i = 0; i < children.length; i += 1) {
 					el.children[i].style.height =
 						initialIndex === i ? "auto" : `${height}px`;
 				}
