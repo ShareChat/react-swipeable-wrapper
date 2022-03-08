@@ -1,66 +1,66 @@
 {
-	"name": "react-swipeable-wrapper",
-	"version": "1.0.1",
-	"description": "Swipeable views wrapper",
-	"license": "MIT",
-	"files": [
-		"dist"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/ShareChat/react-swipeable-wrapper"
-	},
-	"author": "Ashutosh Tanwar <ashutoshtanwar@sharechat.co>",
-	"bugs": {
-		"url": "https://github.com/ShareChat/react-swipeable-wrapper/issues"
-	},
-	"homepage": "https://github.com/ShareChat/react-swipeable-wrapper#readme",
-	"main": "./dist/index.umd.js",
-	"module": "./dist/index.es.js",
-	"scripts": {
-		"dev:example": "cd example && yarn && yarn dev",
-		"build": "vite build",
-		"build:example": "cd example && yarn && yarn upgrade react-swipeable-wrapper && yarn build",
-		"prepare": "yarn build && yarn build:example",
-		"format": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
-		"lint": "eslint ./** -c .eslintrc.json --fix --ext js,jsx --cache --quiet --no-error-on-unmatched-pattern",
-		"size": "size-limit",
-		"deploy:example": "yarn build:example && gh-pages -d example/dist",
-		"pretest": "yarn run prettier && yarn run lint && yarn run build"
-	},
-	"keywords": [
-		"react swipe",
-		"swipe",
-		"swipeable",
-		"react"
-	],
-	"peerDependencies": {
-		"react": "^16.0.0 || ^17"
-	},
-	"devDependencies": {
-		"@size-limit/preset-small-lib": "^7.0.8",
-		"@use-gesture/react": "^10.2.6",
-		"@vitejs/plugin-react": "^1.2.0",
-		"eslint": "^8.9.0",
-		"eslint-config-airbnb": "^19.0.4",
-		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-import": "^2.25.4",
-		"eslint-plugin-jsx-a11y": "^6.5.1",
-		"eslint-plugin-react": "^7.28.0",
-		"eslint-plugin-react-hooks": "^4.3.0",
-		"gh-pages": "^3.2.3",
-		"prettier": "^2.5.1",
-		"prop-types": "^15.8.1",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2",
-		"size-limit": "^7.0.8",
-		"vite": "^2.8.3"
-	},
-	"dependencies": {},
-	"exports": {
-		".": {
-			"import": "./dist/index.es.js",
-			"require": "./dist/index.umd.js"
-		}
-	}
+  "name": "react-swipeable-wrapper",
+  "version": "1.0.1",
+  "description": "Swipeable views wrapper",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ShareChat/react-swipeable-wrapper"
+  },
+  "author": "Ashutosh Tanwar <ashutoshtanwar@sharechat.co>",
+  "bugs": {
+    "url": "https://github.com/ShareChat/react-swipeable-wrapper/issues"
+  },
+  "homepage": "https://github.com/ShareChat/react-swipeable-wrapper#readme",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "scripts": {
+    "dev:example": "cd example && yarn && yarn dev",
+    "build": "vite build",
+    "build:example": "cd example && yarn && yarn upgrade react-swipeable-wrapper && yarn build",
+    "prepare": "yarn build && yarn build:example",
+    "format": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
+    "lint": "eslint ./** -c .eslintrc.json --fix --ext js,jsx --cache --quiet --no-error-on-unmatched-pattern",
+    "size": "size-limit",
+    "deploy:example": "yarn build:example && gh-pages -d example/dist",
+    "pretest": "yarn run prettier && yarn run lint && yarn run build"
+  },
+  "keywords": [
+    "react swipe",
+    "swipe",
+    "swipeable",
+    "react"
+  ],
+  "peerDependencies": {
+    "react": "^16.0.0 || ^17"
+  },
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@use-gesture/react": "^10.2.6",
+    "@vitejs/plugin-react": "^1.2.0",
+    "eslint": "^8.9.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "gh-pages": "^3.2.3",
+    "prettier": "^2.5.1",
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "size-limit": "^7.0.8",
+    "vite": "^2.8.3"
+  },
+  "dependencies": {},
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  }
 }
