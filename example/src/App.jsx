@@ -35,8 +35,9 @@ const styles = {
 	},
 	tabs: {
 		display: "flex",
-		justifyContent: "space-around",
 		height: "2rem",
+		width: "100%",
+		textAlign: "center",
 	},
 	bottomBar: {
 		height: "4px",
@@ -47,9 +48,11 @@ const styles = {
 	},
 	nonSelectedTab: {
 		color: "#DE3163",
+		width: "inherit",
 	},
 	selectedTab: {
 		color: "#000080",
+		width: "inherit",
 	},
 };
 
