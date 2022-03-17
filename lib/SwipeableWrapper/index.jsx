@@ -32,8 +32,6 @@ const checkParent = (el, filterIds) => {
   return checkParent(el.parentNode, filterIds);
 };
 
-const reloadPage = () => window.location.reload(true);
-
 const SwipeableWrapper = forwardRef(
   (
     {
@@ -148,13 +146,7 @@ const SwipeableWrapper = forwardRef(
       },
     );
 
-    useLayoutEffect(() => {
-      if (bottomBarRef?.current) {
-        bottomBarRef.current.style.transition = "transform";
-        bottomBarRef.current.style.transitionTimingFunction =
-          transitionTimingFunction;
-      }
-      swipeToIndex(initialIndex, true);
+    const recalculateStyles = useCallback(() => {
       const { current: el = null } = elementRef;
       if (el) {
         totalWidth.current = Math.min(
@@ -166,12 +158,25 @@ const SwipeableWrapper = forwardRef(
           el.children[i].style.height =
             initialIndex === i ? "auto" : `${height}px`;
         }
+      }
+    }, []);
+
+    useLayoutEffect(() => {
+      if (bottomBarRef?.current) {
+        bottomBarRef.current.style.transition = "transform";
+        bottomBarRef.current.style.transitionTimingFunction =
+          transitionTimingFunction;
+      }
+      swipeToIndex(initialIndex, true);
+      recalculateStyles();
+      const { current: el = null } = elementRef;
+      if (el) {
         el.ontransitionend = onRestFn;
       }
-      window.addEventListener("resize", reloadPage);
+      window.addEventListener("resize", recalculateStyles);
       return () => {
         el.ontransitionend = () => {};
-        window.removeEventListener("resize", reloadPage);
+        window.removeEventListener("resize", recalculateStyles);
       };
     }, []);
 
