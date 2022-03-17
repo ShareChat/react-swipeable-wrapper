@@ -9,8 +9,6 @@ import PropTypes from "prop-types";
 import { useDrag } from "@use-gesture/react";
 import { useLayoutEffect, useRaf } from "../helpers";
 
-const innerHeight = typeof window !== "undefined" ? window.innerHeight : 0;
-
 const scrollToTop = () => {
   const isSmoothScrollSupported =
     "scrollBehavior" in document.documentElement.style;
@@ -33,6 +31,8 @@ const checkParent = (el, filterIds) => {
   if (filterIds.includes(el.id)) return true;
   return checkParent(el.parentNode, filterIds);
 };
+
+const reloadPage = () => window.location.reload(true);
 
 const SwipeableWrapper = forwardRef(
   (
@@ -61,7 +61,7 @@ const SwipeableWrapper = forwardRef(
         rAF(() => {
           onSlideChange(index.current);
           scrollToTop();
-          const height = innerHeight - elementRef.current.clientTop;
+          const height = window.innerHeight - elementRef.current.clientTop;
           elementRef.current.children[prevIndex].style.height = `${height}px`;
           elementRef.current.children[currIndex].style.height = "auto";
         });
@@ -147,6 +147,7 @@ const SwipeableWrapper = forwardRef(
         pointer: { touch: true },
       },
     );
+
     useLayoutEffect(() => {
       if (bottomBarRef?.current) {
         bottomBarRef.current.style.transition = "transform";
@@ -154,18 +155,23 @@ const SwipeableWrapper = forwardRef(
           transitionTimingFunction;
       }
       swipeToIndex(initialIndex, true);
-      const el = elementRef?.current;
+      const { current: el = null } = elementRef;
       if (el) {
-        totalWidth.current = el.parentElement.offsetWidth;
-        const height = innerHeight - el.clientTop;
+        totalWidth.current = Math.min(
+          el.parentElement.offsetWidth,
+          window.innerWidth,
+        );
+        const height = window.innerHeight - el.clientTop;
         for (let i = 0; i < children.length; i += 1) {
           el.children[i].style.height =
             initialIndex === i ? "auto" : `${height}px`;
         }
         el.ontransitionend = onRestFn;
       }
+      window.addEventListener("resize", reloadPage);
       return () => {
         el.ontransitionend = () => {};
+        window.removeEventListener("resize", reloadPage);
       };
     }, []);
 
