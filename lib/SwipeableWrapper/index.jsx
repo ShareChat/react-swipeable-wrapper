@@ -176,7 +176,6 @@ const SwipeableWrapper = forwardRef(
           style={{
             width: `${children.length * 100}%`,
             display: "flex",
-            touchAction: "none",
             transition: "transform",
             transitionTimingFunction,
             willChange: "transform",
