@@ -139,7 +139,6 @@ const App = () => {
 | `onSlideChange`            | `function`                          | `() => {}` | Each time a slide is changed, this function will be executed. |
 | `initialIndex`             | `number`                            | `0`        | Index of the slide to be displayed on the initial mount.      |
 | `filterNodes`              | `Array`                             | `[]`       | Node identifiers that will not accept swipes.                 |
-| `hideOtherTabs`            | `boolean`                           | `false`    | Slides that are not in view will be hidden.                   |
 | `transitionDuration`       | `number`                            | `300`      | Duration of the transition.                                   |
 | `transitionTimingFunction` | `string`                            | `ease-out` | Timing function of the transition.                            |
 
