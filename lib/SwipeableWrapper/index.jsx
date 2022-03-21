@@ -59,9 +59,12 @@ const SwipeableWrapper = forwardRef(
         rAF(() => {
           onSlideChange(index.current);
           scrollToTop();
-          const height = window.innerHeight - elementRef.current.clientTop;
-          elementRef.current.children[prevIndex].style.height = `${height}px`;
-          elementRef.current.children[currIndex].style.height = "auto";
+          const { current: el = null } = elementRef;
+          if (el) {
+            const height = window.innerHeight - el.clientTop;
+            el.children[prevIndex].style.height = `${height}px`;
+            el.children[currIndex].style.height = "auto";
+          }
         });
         previousIndex.current = index.current;
       }
