@@ -604,7 +604,7 @@ react-refresh@^0.11.0:
   integrity sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==
 
 "react-swipeable-wrapper@file:..":
-  version "1.0.1"
+  version "1.1.0"
 
 "react@file:../node_modules/react":
   version "17.0.2"
@@ -674,7 +674,7 @@ to-fast-properties@^2.0.0:
   integrity sha1-3F5pjL0HkmW8c+A3doGk5Og/YW4=
 
 "vite@file:../node_modules/vite":
-  version "2.8.4"
+  version "2.8.6"
   dependencies:
     esbuild "^0.14.14"
     postcss "^8.4.6"
