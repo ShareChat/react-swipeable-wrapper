@@ -42,7 +42,6 @@ const SwipeableWrapper = forwardRef(
       onSlideChange,
       children,
       filterNodes,
-      hideOtherTabs,
       transitionDuration,
       transitionTimingFunction,
     },
@@ -190,11 +189,7 @@ const SwipeableWrapper = forwardRef(
                 willChange: "height",
               }}
             >
-              {hideOtherTabs
-                ? loopIndex === index.current
-                  ? child
-                  : null
-                : child}
+              {child}
             </div>
           ))}
         </div>
@@ -211,7 +206,6 @@ SwipeableWrapper.propTypes = {
   onSlideChange: PropTypes.func,
   children: PropTypes.node.isRequired,
   filterNodes: PropTypes.arrayOf(PropTypes.string),
-  hideOtherTabs: PropTypes.bool,
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
 };
@@ -221,7 +215,6 @@ SwipeableWrapper.defaultProps = {
   onSlideChange: () => {},
   initialIndex: 0,
   filterNodes: [],
-  hideOtherTabs: false,
   transitionDuration: 300,
   transitionTimingFunction: "ease-out",
 };
