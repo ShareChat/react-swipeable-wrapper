@@ -161,7 +161,16 @@ const SwipeableWrapper = forwardRef(
             initialIndex === i ? "auto" : `${height}px`;
         }
       }
-    }, []);
+    }, [children.length, initialIndex]);
+
+    useLayoutEffect(() => {
+      swipeToIndex(initialIndex, true);
+      recalculateStyles();
+      window.addEventListener("resize", recalculateStyles);
+      return () => {
+        window.removeEventListener("resize", recalculateStyles);
+      };
+    }, [initialIndex, recalculateStyles, swipeToIndex]);
 
     useLayoutEffect(() => {
       if (bottomBarRef?.current) {
@@ -169,21 +178,20 @@ const SwipeableWrapper = forwardRef(
         bottomBarRef.current.style.transitionTimingFunction =
           transitionTimingFunction;
       }
-      swipeToIndex(initialIndex, true);
-      recalculateStyles();
+    }, [bottomBarRef, transitionTimingFunction]);
+
+    useLayoutEffect(() => {
       const { current: el = null } = elementRef;
       if (el) {
         el.ontransitionend = onRestFn;
       }
-      window.addEventListener("resize", recalculateStyles);
       return () => {
         el.ontransitionend = () => {};
-        window.removeEventListener("resize", recalculateStyles);
       };
-    }, []);
+    }, [onRestFn]);
 
     return (
-      <div style={{ overflow: "hidden", width: "inherit" }}>
+      <div style={{ width: "inherit", overflow: "hidden" }}>
         <div
           {...bind()}
           style={{
@@ -214,7 +222,7 @@ const SwipeableWrapper = forwardRef(
 
 SwipeableWrapper.propTypes = {
   bottomBarRef: PropTypes.shape({
-    current: PropTypes.objectOf(PropTypes.object),
+    current: PropTypes.oneOf([PropTypes.node, PropTypes.object]),
   }),
   initialIndex: PropTypes.number,
   onSlideChange: PropTypes.func,
