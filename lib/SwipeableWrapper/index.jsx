@@ -43,6 +43,7 @@ const SwipeableWrapper = forwardRef(
       transitionDuration,
       transitionTimingFunction,
       containerStyles,
+      disableAutoScroll,
     },
     ref,
   ) => {
@@ -58,7 +59,7 @@ const SwipeableWrapper = forwardRef(
         const currIndex = index.current;
         rAF(() => {
           onSlideChange(index.current);
-          scrollToTop();
+          if (!disableAutoScroll) scrollToTop();
           const { current: el = null } = elementRef;
           if (el) {
             const height = window.innerHeight - el.clientTop;
@@ -68,7 +69,7 @@ const SwipeableWrapper = forwardRef(
         });
         previousIndex.current = index.current;
       }
-    }, [onSlideChange, rAF]);
+    }, [disableAutoScroll, onSlideChange, rAF]);
 
     const swipeToIndex = useCallback(
       (slideToIndex, avoidAnimation = false) => {
@@ -223,7 +224,10 @@ const SwipeableWrapper = forwardRef(
 
 SwipeableWrapper.propTypes = {
   bottomBarRef: PropTypes.shape({
-    current: PropTypes.oneOf([PropTypes.node, PropTypes.object]),
+    current: PropTypes.oneOfType([
+      PropTypes.node,
+      PropTypes.objectOf(PropTypes.object),
+    ]),
   }),
   initialIndex: PropTypes.number,
   onSlideChange: PropTypes.func,
@@ -232,16 +236,18 @@ SwipeableWrapper.propTypes = {
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
   containerStyles: PropTypes.shape({}),
+  disableAutoScroll: PropTypes.bool,
 };
 
 SwipeableWrapper.defaultProps = {
-  bottomBarRef: null,
+  bottomBarRef: { current: null },
   onSlideChange: () => {},
   initialIndex: 0,
   filterNodes: [],
   transitionDuration: 300,
   transitionTimingFunction: "ease-out",
   containerStyles: {},
+  disableAutoScroll: false,
 };
 
 export default memo(SwipeableWrapper);

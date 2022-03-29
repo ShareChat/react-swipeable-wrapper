@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import React, { useCallback, useRef, useState } from "react";
 
 import SwipeableWrapper from "react-swipeable-wrapper";
@@ -98,6 +99,7 @@ const App = () => {
           initialIndex={initialIndex}
           onSlideChange={handleSlideChange}
           bottomBarRef={bottomBarRef}
+          disableAutoScroll
         >
           <div style={{ ...styles.slide, ...styles.slide1 }}>1st slide</div>
           <div style={{ ...styles.slide, ...styles.slide2 }}>2nd slide</div>
