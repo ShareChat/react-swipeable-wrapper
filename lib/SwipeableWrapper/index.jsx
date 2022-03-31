@@ -51,6 +51,7 @@ const SwipeableWrapper = forwardRef(
     const index = useRef(initialIndex);
     const previousIndex = useRef(initialIndex);
     const totalWidth = useRef(0);
+    const totalHeight = useRef(0);
     const rAF = useRaf();
 
     const onRestFn = useCallback(() => {
@@ -62,8 +63,7 @@ const SwipeableWrapper = forwardRef(
           if (!disableAutoScroll) scrollToTop();
           const { current: el = null } = elementRef;
           if (el) {
-            const height = window.innerHeight - el.clientTop;
-            el.children[prevIndex].style.height = `${height}px`;
+            el.children[prevIndex].style.height = `${totalHeight.current}px`;
             el.children[currIndex].style.height = "auto";
           }
         });
@@ -157,10 +157,11 @@ const SwipeableWrapper = forwardRef(
           el.parentElement.offsetWidth,
           window.innerWidth,
         );
-        const height = window.innerHeight - el.clientTop;
+        totalHeight.current =
+          window.innerHeight - Math.max(el.offsetTop, el.clientTop);
         for (let i = 0; i < children.length; i += 1) {
           el.children[i].style.height =
-            initialIndex === i ? "auto" : `${height}px`;
+            initialIndex === i ? "auto" : `${totalHeight.current}px`;
         }
       }
     }, [children.length, initialIndex]);
