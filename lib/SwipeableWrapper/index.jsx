@@ -42,6 +42,7 @@ const SwipeableWrapper = forwardRef(
       filterNodes,
       transitionDuration,
       transitionTimingFunction,
+      containerStyles,
     },
     ref,
   ) => {
@@ -191,7 +192,7 @@ const SwipeableWrapper = forwardRef(
     }, [onRestFn]);
 
     return (
-      <div style={{ width: "inherit", overflow: "hidden" }}>
+      <div style={{ width: "inherit", overflow: "hidden", ...containerStyles }}>
         <div
           {...bind()}
           style={{
@@ -230,6 +231,7 @@ SwipeableWrapper.propTypes = {
   filterNodes: PropTypes.arrayOf(PropTypes.string),
   transitionDuration: PropTypes.number,
   transitionTimingFunction: PropTypes.string,
+  containerStyles: PropTypes.shape({}),
 };
 
 SwipeableWrapper.defaultProps = {
@@ -239,6 +241,7 @@ SwipeableWrapper.defaultProps = {
   filterNodes: [],
   transitionDuration: 300,
   transitionTimingFunction: "ease-out",
+  containerStyles: {},
 };
 
 export default memo(SwipeableWrapper);
