@@ -11,7 +11,6 @@
     "@vitejs/plugin-react": "file:../node_modules/@vitejs/plugin-react",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
-    "react-swipeable-wrapper": "file:..",
     "vite": "file:../node_modules/vite"
   }
 }
