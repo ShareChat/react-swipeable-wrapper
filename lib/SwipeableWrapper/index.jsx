@@ -74,20 +74,24 @@ const SwipeableWrapper = forwardRef(
     const swipeToIndex = useCallback(
       (slideToIndex, avoidAnimation = false) => {
         rAF(() => {
-          elementRef.current.style.transitionDuration = !avoidAnimation
-            ? `${transitionDuration / 1000}s`
-            : "0s";
-          if (bottomBarRef?.current) {
-            bottomBarRef.current.style.transitionDuration = !avoidAnimation
+          const { current: el = null } = elementRef;
+          if (el) {
+            el.style.transitionDuration = !avoidAnimation
               ? `${transitionDuration / 1000}s`
               : "0s";
-            bottomBarRef.current.style.transform = `translate3d(${
-              100 * slideToIndex
-            }%, 0px, 0px)`;
+            const { current: bottomBarEl = null } = bottomBarRef;
+            if (bottomBarEl) {
+              bottomBarEl.style.transitionDuration = !avoidAnimation
+                ? `${transitionDuration / 1000}s`
+                : "0s";
+              bottomBarEl.style.transform = `translate3d(${
+                100 * slideToIndex
+              }%, 0px, 0px)`;
+            }
+            el.style.transform = `translate3d(${
+              -slideToIndex * totalWidth.current
+            }px, 0px, 0px)`;
           }
-          elementRef.current.style.transform = `translate3d(${
-            -slideToIndex * totalWidth.current
-          }px, 0px, 0px)`;
         });
         if (index.current === slideToIndex) return;
         index.current = slideToIndex;
@@ -118,19 +122,24 @@ const SwipeableWrapper = forwardRef(
           )
             moveToPoint = Math.min(moveToPoint, totalWidth.current / 4);
           rAF(() => {
-            if (elementRef.current.style.transitionDuration !== "0s")
-              elementRef.current.style.transitionDuration = "0s";
-            if (bottomBarRef?.current) {
-              const moveX = moveToPoint / totalWidth.current;
-              if (bottomBarRef.current.style.transitionDuration !== "0s")
-                bottomBarRef.current.style.transitionDuration = "0s";
-              bottomBarRef.current.style.transform = `translate3d(${
-                ((dirX ? 1 : -1) * moveX + index.current) * 100
-              }%, 0px, 0px)`;
+            const { current: el = null } = elementRef;
+            if (el) {
+              if (el.style.transitionDuration !== "0s")
+                el.style.transitionDuration = "0s";
+              const { current: bottomBarEl = null } = bottomBarRef;
+              if (bottomBarEl) {
+                const moveX = moveToPoint / totalWidth.current;
+                if (bottomBarEl.style.transitionDuration !== "0s")
+                  bottomBarEl.style.transitionDuration = "0s";
+                bottomBarEl.style.transform = `translate3d(${
+                  ((dirX ? 1 : -1) * moveX + index.current) * 100
+                }%, 0px, 0px)`;
+              }
+              el.style.transform = `translate3d(${
+                (dirX ? -1 : 1) * moveToPoint -
+                index.current * totalWidth.current
+              }px, 0px, 0px)`;
             }
-            elementRef.current.style.transform = `translate3d(${
-              (dirX ? -1 : 1) * moveToPoint - index.current * totalWidth.current
-            }px, 0px, 0px)`;
           });
         } else if (!down) {
           const slideToIndex = index.current + (dirX ? 1 : -1);

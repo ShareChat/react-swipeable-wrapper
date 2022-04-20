@@ -2,16 +2,16 @@
 
 > A React component for swipeable views.
 
-| Package                 | Version                                                                                                                           |
-| ----------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-| react-swipeable-wrapper | [![npm version](https://img.shields.io/npm/v/react-swipeable-wrapper.svg)](https://www.npmjs.com/package/react-swipeable-wrapper) |
+| Package                               | Version                                                                                                                                         |
+| ------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- |
+| @mohalla-tech/react-swipeable-wrapper | [![npm version](https://img.shields.io/npm/v/react-swipeable-wrapper.svg)](https://www.npmjs.com/package/@mohalla-tech/react-swipeable-wrapper) |
 
 ## Installation
 
 ```sh
-npm install --save react-swipeable-wrapper
+npm install --save @mohalla-tech/react-swipeable-wrapper
 or
-yarn add react-swipeable-wrapper
+yarn add @mohalla-tech/react-swipeable-wrapper
 ```
 
 ## Example
@@ -155,6 +155,10 @@ swipeRef.current.swipeToIndex(indexOfSlide);
 ```jsx
 const currentSlide = swipeRef.current.getCurrentIndex();
 ```
+
+## Note
+
+#### `initialIndex` prop should be memoized or constant value.
 
 ## License
 
