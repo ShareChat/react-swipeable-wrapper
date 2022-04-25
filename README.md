@@ -160,6 +160,8 @@ const currentSlide = swipeRef.current.getCurrentIndex();
 
 #### `initialIndex` prop should be memoized or constant value.
 
+#### `onSlideChange` function should be memoized.
+
 ## License
 
 This project is licensed under the terms of the
