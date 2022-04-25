@@ -198,7 +198,7 @@ const SwipeableWrapper = forwardRef(
         el.addEventListener("transitionend", onRestFn);
       }
       return () => {
-        el.removeEventListener("transitionend");
+        el.removeEventListener("transitionend", onRestFn);
       };
     }, [onRestFn]);
 
