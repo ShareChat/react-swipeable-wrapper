@@ -195,10 +195,10 @@ const SwipeableWrapper = forwardRef(
     useLayoutEffect(() => {
       const { current: el = null } = elementRef;
       if (el) {
-        el.ontransitionend = onRestFn;
+        el.addEventListener("transitionend", onRestFn);
       }
       return () => {
-        el.ontransitionend = () => {};
+        el.removeEventListener("transitionend", onRestFn);
       };
     }, [onRestFn]);
 

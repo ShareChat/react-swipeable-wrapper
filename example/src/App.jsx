@@ -69,9 +69,9 @@ const App = () => {
     if (currentIndex !== previousIndex) swipeToIndex(currentIndex);
   }, []);
 
-  const handleSlideChange = currentIndex => {
+  const handleSlideChange = useCallback(currentIndex => {
     setSlideIdx(currentIndex);
-  };
+  }, []);
 
   return (
     <div>
