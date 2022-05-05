@@ -44,6 +44,7 @@ const SwipeableWrapper = forwardRef(
       transitionTimingFunction,
       containerStyles,
       disableAutoScroll,
+      disableAutoAdjustHeight,
     },
     ref,
   ) => {
@@ -62,14 +63,14 @@ const SwipeableWrapper = forwardRef(
           onSlideChange(index.current);
           if (!disableAutoScroll) scrollToTop();
           const { current: el = null } = elementRef;
-          if (el) {
+          if (el && !disableAutoAdjustHeight && el.children.length > 0) {
             el.children[prevIndex].style.height = `${totalHeight.current}px`;
             el.children[currIndex].style.height = "auto";
           }
         });
         previousIndex.current = index.current;
       }
-    }, [disableAutoScroll, onSlideChange, rAF]);
+    }, [disableAutoAdjustHeight, disableAutoScroll, onSlideChange, rAF]);
 
     const swipeToIndex = useCallback(
       (slideToIndex, avoidAnimation = false) => {
@@ -166,14 +167,16 @@ const SwipeableWrapper = forwardRef(
           el.parentElement.offsetWidth,
           window.innerWidth,
         );
-        totalHeight.current =
-          window.innerHeight - Math.max(el.offsetTop, el.clientTop);
-        for (let i = 0; i < children.length; i += 1) {
-          el.children[i].style.height =
-            initialIndex === i ? "auto" : `${totalHeight.current}px`;
+        if (!disableAutoAdjustHeight) {
+          totalHeight.current =
+            window.innerHeight - Math.max(el.offsetTop, el.clientTop);
+          for (let i = 0; i < children.length; i += 1) {
+            el.children[i].style.height =
+              initialIndex === i ? "auto" : `${totalHeight.current}px`;
+          }
         }
       }
-    }, [children.length, initialIndex]);
+    }, [children.length, disableAutoAdjustHeight, initialIndex]);
 
     useLayoutEffect(() => {
       swipeToIndex(initialIndex, true);
@@ -220,7 +223,7 @@ const SwipeableWrapper = forwardRef(
               key={`tabs-${loopIndex}`}
               style={{
                 width: `${100 / children.length}%`,
-                willChange: "height",
+                ...(!disableAutoAdjustHeight ? { willChange: "height" } : {}),
               }}
             >
               {child}
@@ -247,6 +250,7 @@ SwipeableWrapper.propTypes = {
   transitionTimingFunction: PropTypes.string,
   containerStyles: PropTypes.shape({}),
   disableAutoScroll: PropTypes.bool,
+  disableAutoAdjustHeight: PropTypes.bool,
 };
 
 SwipeableWrapper.defaultProps = {
@@ -258,6 +262,7 @@ SwipeableWrapper.defaultProps = {
   transitionTimingFunction: "ease-out",
   containerStyles: {},
   disableAutoScroll: false,
+  disableAutoAdjustHeight: false,
 };
 
 export default memo(SwipeableWrapper);
