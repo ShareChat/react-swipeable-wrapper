@@ -141,6 +141,9 @@ const App = () => {
 | `filterNodes`              | `Array`                             | `[]`       | Node identifiers that will not accept swipes.                 |
 | `transitionDuration`       | `number`                            | `300`      | Duration of the transition.                                   |
 | `transitionTimingFunction` | `string`                            | `ease-out` | Timing function of the transition.                            |
+| `containerStyles`          | `object`                            | `{}`       | Styles to override container styles.                          |
+| `disableAutoScroll`        | `boolean`                           | `false`    | Disable auto scroll to top.                                   |
+| `disableAutoAdjustHeight`  | `boolean`                           | `false`    | Disable auto adjust height.                                   |
 
 ## Functions
 
