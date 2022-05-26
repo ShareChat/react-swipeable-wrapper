@@ -1,7 +1,4 @@
 {
-  "name": "react-swipeable-wrapper-example",
-  "homepage": ".",
-  "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "node ../node_modules/vite/bin/vite.js dev",
