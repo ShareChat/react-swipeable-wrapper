@@ -8,6 +8,6 @@
     "@vitejs/plugin-react": "file:../node_modules/@vitejs/plugin-react",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
-    "vite": "file:../node_modules/vite"
+    "vite": "2.9.16"
   }
 }
